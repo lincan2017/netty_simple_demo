@@ -44,33 +44,17 @@ public class Client {
     static class FirstClientHandlerAdapter extends ChannelInboundHandlerAdapter {
 
         /**
-         * 复写连接成功后调用的方法，向服务器发送数据
-         *
-         * @param ctx 上下文对象
-         */
-        @Override
-        public void channelActive(ChannelHandlerContext ctx) {
-            System.out.println(new Date() + " 客户端向服务器发送数据：");
-
-            // 封装待传输的数据
-            ByteBuf byteBuf = getByteBuf(ctx);
-
-            // 写出到服务器
-            ctx.writeAndFlush(byteBuf);
-        }
-
-        /**
          * 准备发送数据对象，并封装到数据载体中
          *
          * @param ctx 上下文对象
          * @return ByteBuf carrier
          */
-        private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
+        private ByteBuf getByteBuf(ChannelHandlerContext ctx, String msg) {
             // 获取数据载体
             ByteBuf buffer = ctx.alloc().buffer();
 
             // 数据准备
-            byte[] bytes = "你好，闪电侠！很荣幸跟你对上话。".getBytes(StandardCharsets.UTF_8);
+            byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
 
             // 填充数据到 ByteBuf 对象中
             buffer.writeBytes(bytes);
@@ -90,6 +74,13 @@ public class Client {
 
             System.out.println(new Date() + " 收到来自服务端的消息：" +
                     byteBuf.toString(StandardCharsets.UTF_8));
+
+            System.out.println(new Date() + " 客户端向服务器回复消息：");
+
+            ByteBuf replyBuffer = getByteBuf(ctx, "哇，开心~");
+
+            // 写出到服务器
+            ctx.writeAndFlush(replyBuffer);
         }
     }
 }

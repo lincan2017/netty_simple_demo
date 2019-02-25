@@ -52,6 +52,22 @@ public class Server {
     static class FirstServerHandlerAdapter extends ChannelInboundHandlerAdapter {
 
         /**
+         * 复写连接成功方法，向连接推送消息
+         *
+         * @param ctx 上下文对象
+         */
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) {
+            System.out.println(new Date() + " 服务器向客户端推送消息");
+
+            // 封装待发送的消息
+            ByteBuf sendBuffer = getByteBuf(ctx, "欢迎你加入我们的大家庭，很高兴遇见你");
+
+            // 写出到客户端
+            ctx.writeAndFlush(sendBuffer);
+        }
+
+        /**
          * 复写读取消息后的调用的方法，打印收到的消息
          *
          * @param ctx 连接相关的上下文对象
@@ -64,14 +80,6 @@ public class Server {
 
             System.out.println(new Date() + " 收到来自客户端的消息：" +
                     byteBuf.toString(StandardCharsets.UTF_8));
-
-            System.out.println(new Date() + " 服务端向客户端回复消息：");
-
-            // 封装待发送的消息
-            ByteBuf sendBuffer = getByteBuf(ctx);
-
-            // 写出到客户端
-            ctx.writeAndFlush(sendBuffer);
         }
 
 
@@ -81,9 +89,9 @@ public class Server {
          * @param ctx 上下文对象
          * @return carrier
          */
-        private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
+        private ByteBuf getByteBuf(ChannelHandlerContext ctx, String msg) {
             // 数据准备
-            byte[] bytes = "你好，我也很开心，谢谢你的支持！".getBytes(StandardCharsets.UTF_8);
+            byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
 
             // 获取数据载体
             ByteBuf byteBuf = ctx.alloc().buffer();
