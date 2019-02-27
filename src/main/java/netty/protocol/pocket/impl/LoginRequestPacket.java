@@ -12,7 +12,7 @@ import netty.protocol.pocket.Packet;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class LoginPacket extends Packet {
+public class LoginRequestPacket extends Packet {
     /**
      * 用户Id
      */

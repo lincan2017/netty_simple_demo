@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
-import netty.protocol.pocket.impl.LoginPacket;
+import netty.protocol.pocket.impl.LoginRequestPacket;
 import serialize.Serialize;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author : Lin Can
  * @date : 2019/2/27 9:23
  */
-public class PacketCode {
+public class PacketCodec {
     private static final int MAGIC_NUMBER = 0x12345678;
     private static final Map<Byte,Serialize> SERIALIZE_MAP;
     private static final Map<Byte,Class<? extends Packet>> PACKET_MAP;
@@ -26,7 +26,7 @@ public class PacketCode {
         SERIALIZE_MAP.put(serialize.getSerializeAlgorithm(),serialize);
 
         PACKET_MAP = new HashMap<>();
-        PACKET_MAP.put(Command.LOGIN_COMMAND,LoginPacket.class);
+        PACKET_MAP.put(Command.LOGIN_COMMAND, LoginRequestPacket.class);
     }
 
     /**
