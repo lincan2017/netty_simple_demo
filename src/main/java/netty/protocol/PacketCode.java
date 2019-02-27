@@ -88,6 +88,7 @@ public class PacketCode {
 
         // 核心数据长度
         int dataLen = byteBuf.readInt();
+        System.out.println("核心数据字节长度"+dataLen);
         byte[] dist = new byte[dataLen];
         byteBuf.readBytes(dist);
 

@@ -1,5 +1,6 @@
 package netty.protocol.pocket;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 /**
@@ -13,12 +14,14 @@ public abstract class Packet {
     /**
      * 版本号
      */
+    @JSONField(deserialize = false, serialize = false)
     private byte version = 1;
 
     /**
      * 获取指令类型
      * @return Command
      */
+    @JSONField(serialize = false)
     public abstract Byte getCommand();
 
 }
