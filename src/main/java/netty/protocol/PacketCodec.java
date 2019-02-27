@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufAllocator;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
 import netty.protocol.pocket.impl.LoginRequestPacket;
+import netty.protocol.pocket.impl.LoginResponsePacket;
 import serialize.Serialize;
 
 import java.util.HashMap;
@@ -16,9 +17,22 @@ import java.util.Map;
  * @date : 2019/2/27 9:23
  */
 public class PacketCodec {
+    /**
+     * 魔数
+     */
     private static final int MAGIC_NUMBER = 0x12345678;
+
+    /**
+     * 存放序列化方式的map
+     */
     private static final Map<Byte,Serialize> SERIALIZE_MAP;
+
+    /**
+     * 存放指令的map
+     */
     private static final Map<Byte,Class<? extends Packet>> PACKET_MAP;
+
+    public static final PacketCodec INSTANCE = new PacketCodec();
 
     static {
         SERIALIZE_MAP = new HashMap<>();
@@ -26,7 +40,8 @@ public class PacketCodec {
         SERIALIZE_MAP.put(serialize.getSerializeAlgorithm(),serialize);
 
         PACKET_MAP = new HashMap<>();
-        PACKET_MAP.put(Command.LOGIN_COMMAND, LoginRequestPacket.class);
+        PACKET_MAP.put(Command.LOGIN_REQUEST_COMMAND, LoginRequestPacket.class);
+        PACKET_MAP.put(Command.LOGIN_RESPONSE_COMMAND, LoginResponsePacket.class);
     }
 
     /**
@@ -34,11 +49,12 @@ public class PacketCodec {
      * @author : Lin Can
      * @date: 2019/2/27 10:43
      * @param packet  数据包
+     * @param byteBufAllocator ByteBuf 分配器
      * @return: io.netty.buffer.ByteBuf
      */
-    public ByteBuf encode(Packet packet) {
+    public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
         // 1 获取 Netty 的传输数据载体
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
 
         // 2 序列化JAVA对象
         byte[] datas = Serialize.DEFAULT.serialize(packet);
@@ -80,18 +96,25 @@ public class PacketCodec {
         byteBuf.readByte();
         // 序列化/反序列化算法
         byte serializeAlgorithm = byteBuf.readByte();
-        Serialize serialize = SERIALIZE_MAP.get(serializeAlgorithm);
+        Serialize serialize = getSerializeFromMap(serializeAlgorithm);
 
         // 指令类型
         byte commandType = byteBuf.readByte();
-        Class<? extends Packet> clazz = PACKET_MAP.get(commandType);
+        Class<? extends Packet> clazz = getCommandTypeFromMap(commandType);
 
         // 核心数据长度
         int dataLen = byteBuf.readInt();
-        System.out.println("核心数据字节长度"+dataLen);
         byte[] dist = new byte[dataLen];
         byteBuf.readBytes(dist);
 
         return serialize.deserialize(dist,clazz);
+    }
+
+    private Serialize getSerializeFromMap(Byte serializeAlgorithm) {
+        return SERIALIZE_MAP.get(serializeAlgorithm);
+    }
+
+    private Class<? extends Packet> getCommandTypeFromMap(Byte command) {
+        return PACKET_MAP.get(command);
     }
 }

@@ -8,7 +8,12 @@ package netty.protocol.command;
 public interface Command {
 
     /**
-     * 登录的指令
+     * 登录请求的指令
      */
-    byte LOGIN_COMMAND = 1;
+    byte LOGIN_REQUEST_COMMAND = 1;
+
+    /**
+     * 登录响应的指令
+     */
+    byte LOGIN_RESPONSE_COMMAND = 2;
 }
