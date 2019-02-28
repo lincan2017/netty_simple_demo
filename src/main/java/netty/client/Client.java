@@ -1,11 +1,18 @@
 package netty.client;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import netty.protocol.PacketCodec;
+import netty.protocol.pocket.impl.MessageRequestPacket;
+import netty.util.LoginUtil;
 
 import java.util.Date;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,6 +58,8 @@ public class Client {
         bootstrap.connect(host, port).addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println(new Date() + ": 客户端连接成功");
+
+                startConsoleThread(((ChannelFuture)future).channel());
                 return;
             }
             if (retry <= 0) {
@@ -68,4 +77,29 @@ public class Client {
                     () -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
         });
     }
+
+    /**
+     * 启动控制台线程，用于客户端向服务端发送消息
+     *
+     * @param channel 链接
+     */
+    private static void startConsoleThread(Channel channel) {
+        new Thread(() -> {
+            while (!Thread.interrupted()) {
+                if (!LoginUtil.hasLogin(channel)) {
+                    continue;
+                }
+                System.out.println("输入需要发送到服务端的消息：");
+                Scanner scanner = new Scanner(System.in);
+                String line = scanner.nextLine();
+
+                MessageRequestPacket requestPacket = new MessageRequestPacket();
+                requestPacket.setMessage(line);
+                ByteBuf requestByteBuf = PacketCodec.INSTANCE.encode(channel.alloc(), requestPacket);
+
+                channel.writeAndFlush(requestByteBuf);
+            }
+        }).start();
+    }
+
 }

@@ -7,6 +7,8 @@ import netty.protocol.PacketCodec;
 import netty.protocol.pocket.Packet;
 import netty.protocol.pocket.impl.LoginRequestPacket;
 import netty.protocol.pocket.impl.LoginResponsePacket;
+import netty.protocol.pocket.impl.MessageRequestPacket;
+import netty.protocol.pocket.impl.MessageResponsePacket;
 
 import java.util.Date;
 
@@ -50,6 +52,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             // 编码登录响应对象
             ByteBuf response = PacketCodec.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
             // 写到客户端
+            ctx.channel().writeAndFlush(response);
+        } else if (packet instanceof MessageRequestPacket) {
+            MessageRequestPacket messageRequestPacket = (MessageRequestPacket) packet;
+            System.out.println(new Date() + " 收到客户端的消息：" + messageRequestPacket.getMessage());
+
+            MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
+            messageResponsePacket.setMessage("服务器回复【" + messageRequestPacket.getMessage() + "】");
+
+            ByteBuf response = PacketCodec.INSTANCE.encode(ctx.alloc(), messageResponsePacket);
             ctx.channel().writeAndFlush(response);
         }
 

@@ -6,6 +6,8 @@ import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
 import netty.protocol.pocket.impl.LoginRequestPacket;
 import netty.protocol.pocket.impl.LoginResponsePacket;
+import netty.protocol.pocket.impl.MessageRequestPacket;
+import netty.protocol.pocket.impl.MessageResponsePacket;
 import serialize.Serialize;
 
 import java.util.HashMap;
@@ -42,6 +44,8 @@ public class PacketCodec {
         PACKET_MAP = new HashMap<>();
         PACKET_MAP.put(Command.LOGIN_REQUEST_COMMAND, LoginRequestPacket.class);
         PACKET_MAP.put(Command.LOGIN_RESPONSE_COMMAND, LoginResponsePacket.class);
+        PACKET_MAP.put(Command.MESSAGE_REQUEST_COMMAND, MessageRequestPacket.class);
+        PACKET_MAP.put(Command.MESSAGE_RESPONSE_COMMAND, MessageResponsePacket.class);
     }
 
     /**
@@ -111,10 +115,18 @@ public class PacketCodec {
     }
 
     private Serialize getSerializeFromMap(Byte serializeAlgorithm) {
-        return SERIALIZE_MAP.get(serializeAlgorithm);
+        Serialize serialize = SERIALIZE_MAP.get(serializeAlgorithm);
+        if (serialize == null) {
+            throw new RuntimeException("没有对应的序列化类型");
+        }
+        return serialize;
     }
 
     private Class<? extends Packet> getCommandTypeFromMap(Byte command) {
-        return PACKET_MAP.get(command);
+        Class<? extends Packet> aClass = PACKET_MAP.get(command);
+        if (aClass == null) {
+            throw new RuntimeException("没有对应类型的Packet");
+        }
+        return aClass;
     }
 }

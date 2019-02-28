@@ -7,9 +7,10 @@ import netty.protocol.PacketCodec;
 import netty.protocol.pocket.Packet;
 import netty.protocol.pocket.impl.LoginRequestPacket;
 import netty.protocol.pocket.impl.LoginResponsePacket;
+import netty.protocol.pocket.impl.MessageResponsePacket;
+import netty.util.LoginUtil;
 
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * @author : Lin Can
@@ -19,6 +20,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 客户端成功连接上服务端时，Netty 会回调该方法
+     *
      * @param ctx 上下文对象
      */
     @Override
@@ -39,6 +41,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 客户端读取到来自服务端的消息后，Netty 会回调该方法
+     *
      * @param ctx 连接相关的上下文对象
      * @param msg 接收到的消息
      */
@@ -51,10 +54,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         if (packet instanceof LoginResponsePacket) {
             LoginResponsePacket responsePacket = (LoginResponsePacket) packet;
             if (responsePacket.getSuccess()) {
+                LoginUtil.markAsLogin(ctx.channel());
                 System.out.println(new Date() + ": 客户端登录成功");
             } else {
                 System.out.println(new Date() + ": 客户端登录失败，原因：" + responsePacket.getReson());
             }
+        } else if (packet instanceof MessageResponsePacket) {
+            MessageResponsePacket responsePacket = (MessageResponsePacket) packet;
+            System.out.println(new Date() + " 收到服务器消息：" + responsePacket.getMessage());
         }
 
     }
