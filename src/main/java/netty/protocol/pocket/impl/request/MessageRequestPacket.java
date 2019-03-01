@@ -1,6 +1,8 @@
-package netty.protocol.pocket.impl;
+package netty.protocol.pocket.impl.request;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
 
@@ -9,7 +11,8 @@ import netty.protocol.pocket.Packet;
  * @author : Lin Can
  * @date : 2019/2/28 10:19
  */
-@Data
+@Getter
+@Setter
 public class MessageRequestPacket extends Packet {
 
     /**

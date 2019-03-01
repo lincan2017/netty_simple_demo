@@ -3,7 +3,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import netty.protocol.PacketCodec;
 import netty.protocol.pocket.Packet;
-import netty.protocol.pocket.impl.LoginRequestPacket;
+import netty.protocol.pocket.impl.request.LoginRequestPacket;
 import org.junit.Assert;
 import org.junit.Test;
 import serialize.Serialize;

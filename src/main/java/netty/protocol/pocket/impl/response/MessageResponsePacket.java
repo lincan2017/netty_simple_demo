@@ -1,6 +1,8 @@
-package netty.protocol.pocket.impl;
+package netty.protocol.pocket.impl.response;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
 
@@ -10,7 +12,8 @@ import netty.protocol.pocket.Packet;
  * @date : 2019/2/28 10:23
  */
 
-@Data
+@Getter
+@Setter
 public class MessageResponsePacket extends Packet {
 
     /**

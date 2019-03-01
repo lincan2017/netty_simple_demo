@@ -1,14 +1,16 @@
 package netty.client;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import netty.protocol.PacketCodec;
-import netty.protocol.pocket.impl.MessageRequestPacket;
+import netty.client.handler.LoginResponseHandler;
+import netty.client.handler.MessageResponseHandler;
+import netty.codec.PacketDecoder;
+import netty.codec.PacketEncoder;
+import netty.protocol.pocket.impl.request.MessageRequestPacket;
 import netty.util.LoginUtil;
 
 import java.util.Date;
@@ -40,7 +42,10 @@ public class Client {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
-                        ch.pipeline().addLast(new ClientHandler());
+                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new LoginResponseHandler());
+                        ch.pipeline().addLast(new MessageResponseHandler());
+                        ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
         connect(bootstrap, HOST, PORT, MAX_RETRY);
@@ -95,9 +100,8 @@ public class Client {
 
                 MessageRequestPacket requestPacket = new MessageRequestPacket();
                 requestPacket.setMessage(line);
-                ByteBuf requestByteBuf = PacketCodec.INSTANCE.encode(channel.alloc(), requestPacket);
 
-                channel.writeAndFlush(requestByteBuf);
+                channel.writeAndFlush(requestPacket);
             }
         }).start();
     }

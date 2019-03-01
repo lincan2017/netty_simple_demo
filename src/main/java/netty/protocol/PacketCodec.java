@@ -4,10 +4,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
-import netty.protocol.pocket.impl.LoginRequestPacket;
-import netty.protocol.pocket.impl.LoginResponsePacket;
-import netty.protocol.pocket.impl.MessageRequestPacket;
-import netty.protocol.pocket.impl.MessageResponsePacket;
+import netty.protocol.pocket.impl.request.LoginRequestPacket;
+import netty.protocol.pocket.impl.response.LoginResponsePacket;
+import netty.protocol.pocket.impl.request.MessageRequestPacket;
+import netty.protocol.pocket.impl.response.MessageResponsePacket;
 import serialize.Serialize;
 
 import java.util.HashMap;
@@ -60,10 +60,24 @@ public class PacketCodec {
         // 1 获取 Netty 的传输数据载体
         ByteBuf byteBuf = byteBufAllocator.ioBuffer();
 
-        // 2 序列化JAVA对象
+        encode(byteBuf,packet);
+
+        return byteBuf;
+    }
+
+    /**
+     * 编码：将数据包转换为 Netty 传输的数据载体对象
+     * @author : Lin Can
+     * @date: 2019/2/27 10:43
+     * @param packet  数据包
+     * @param byteBuf 存放编码后的数据
+     */
+    public void encode(ByteBuf byteBuf, Packet packet) {
+
+        // 1 序列化JAVA对象
         byte[] datas = Serialize.DEFAULT.serialize(packet);
 
-        // 3 按照协议设计填充数据
+        // 2 按照协议设计填充数据
 
         // 前四个字节是魔数
         byteBuf.writeInt(MAGIC_NUMBER);
@@ -78,8 +92,6 @@ public class PacketCodec {
         byteBuf.writeInt(datas.length);
         // 核心数据
         byteBuf.writeBytes(datas);
-
-        return byteBuf;
     }
 
     /**

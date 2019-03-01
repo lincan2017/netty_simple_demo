@@ -1,4 +1,4 @@
-package netty.protocol.pocket.impl;
+package netty.protocol.pocket.impl.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

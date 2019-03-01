@@ -5,12 +5,10 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import netty.inbound.InBoundHandlerA;
-import netty.inbound.InBoundHandlerB;
-import netty.inbound.InBoundHandlerC;
-import netty.outbound.OutBoundHandlerA;
-import netty.outbound.OutBoundHandlerB;
-import netty.outbound.OutBoundHandlerC;
+import netty.codec.PacketDecoder;
+import netty.codec.PacketEncoder;
+import netty.server.handler.LoginRequestHandler;
+import netty.server.handler.MessageRequestHandler;
 
 import java.util.Date;
 
@@ -38,13 +36,10 @@ public class Server {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
-                        ch.pipeline().addLast(new InBoundHandlerA());
-                        ch.pipeline().addLast(new InBoundHandlerB());
-                        ch.pipeline().addLast(new InBoundHandlerC());
-
-                        ch.pipeline().addLast(new OutBoundHandlerA());
-                        ch.pipeline().addLast(new OutBoundHandlerB());
-                        ch.pipeline().addLast(new OutBoundHandlerC());
+                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(new LoginRequestHandler());
+                        ch.pipeline().addLast(new MessageRequestHandler());
+                        ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
 
