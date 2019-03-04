@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.protocol.pocket.impl.request.LoginRequestPacket;
 import netty.protocol.pocket.impl.response.LoginResponsePacket;
+import netty.util.LoginUtil;
 
 import java.util.Date;
 
@@ -27,7 +28,8 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginRequestPacket loginRequestPacket) {
         // 登录逻辑 -- 返回登录响应到对端
-        ctx.channel().writeAndFlush(login(loginRequestPacket));
+        ctx.channel().writeAndFlush(login(loginRequestPacket, ctx));
+
     }
 
     /**
@@ -35,12 +37,14 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
      * @param loginRequestPacket 登录请求
      * @return 登录响应
      */
-    private LoginResponsePacket login(LoginRequestPacket loginRequestPacket) {
+    private LoginResponsePacket login(LoginRequestPacket loginRequestPacket, ChannelHandlerContext ctx) {
         System.out.println(new Date() + ": 收到客户端登录请求……");
         LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
         if (valid(loginRequestPacket)) {
             loginResponsePacket.setSuccess(true);
             System.out.println(new Date() + ": 登录成功!");
+
+            LoginUtil.markAsLogin(ctx.channel());
         } else {
             loginResponsePacket.setSuccess(false);
             loginResponsePacket.setReson("客户端用户名密码校验失败");

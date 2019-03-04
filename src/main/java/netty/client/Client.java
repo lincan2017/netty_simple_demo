@@ -94,9 +94,10 @@ public class Client {
     private static void startConsoleThread(Channel channel) {
         new Thread(() -> {
             while (!Thread.interrupted()) {
-                if (!LoginUtil.hasLogin(channel)) {
+                // 客户端侧不作登录校验
+                /*if (!LoginUtil.hasLogin(channel)) {
                     continue;
-                }
+                }*/
                 System.out.println("输入需要发送到服务端的消息：");
                 Scanner scanner = new Scanner(System.in);
                 String line = scanner.nextLine();
@@ -104,9 +105,7 @@ public class Client {
                 MessageRequestPacket requestPacket = new MessageRequestPacket();
                 requestPacket.setMessage(line);
 
-                for (int i = 0; i < 1000; i++) {
-                    channel.writeAndFlush(requestPacket);
-                }
+                channel.writeAndFlush(requestPacket);
             }
         }).start();
     }

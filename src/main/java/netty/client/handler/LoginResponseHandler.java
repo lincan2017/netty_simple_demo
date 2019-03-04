@@ -25,7 +25,8 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
         loginRequestPacket.setUsername("flash_fans");
         loginRequestPacket.setPassword("pwd");
 
-        ctx.channel().writeAndFlush(loginRequestPacket);
+        // 注释掉登录请求的发送 -- 即跳过身份验证
+        //ctx.channel().writeAndFlush(loginRequestPacket);
     }
 
     /**
@@ -42,5 +43,11 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
         } else {
             System.out.println(new Date() + ": 客户端登录失败，原因：" + msg.getReson());
         }
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("客户端连接被关闭!");
+        super.channelInactive(ctx);
     }
 }
