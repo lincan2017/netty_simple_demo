@@ -9,6 +9,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import netty.codec.PacketDecoder;
 import netty.codec.PacketEncoder;
 import netty.codec.Spliter;
+import netty.server.handler.LifeCycleTestHandler;
 import netty.server.handler.LoginRequestHandler;
 import netty.server.handler.MessageRequestHandler;
 
@@ -38,6 +39,7 @@ public class Server {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
+                        ch.pipeline().addLast(new LifeCycleTestHandler());
                         ch.pipeline().addLast(new Spliter());
 
                         ch.pipeline().addLast(new PacketDecoder());
