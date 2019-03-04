@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import netty.client.handler.LoginResponseHandler;
 import netty.client.handler.MessageResponseHandler;
 import netty.codec.PacketDecoder;
@@ -42,6 +43,7 @@ public class Client {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
+                        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,7,4));
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
@@ -101,7 +103,9 @@ public class Client {
                 MessageRequestPacket requestPacket = new MessageRequestPacket();
                 requestPacket.setMessage(line);
 
-                channel.writeAndFlush(requestPacket);
+                for (int i = 0; i < 1000; i++) {
+                    channel.writeAndFlush(requestPacket);
+                }
             }
         }).start();
     }
