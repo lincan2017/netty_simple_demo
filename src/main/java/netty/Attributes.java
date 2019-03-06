@@ -1,6 +1,7 @@
 package netty;
 
 import io.netty.util.AttributeKey;
+import netty.session.Session;
 
 /**
  * netty channel attr instance interface
@@ -11,4 +12,6 @@ import io.netty.util.AttributeKey;
 public interface Attributes {
 
     AttributeKey<Boolean> LOGIN = AttributeKey.newInstance("login");
+
+    AttributeKey<Session> SESSION = AttributeKey.newInstance("session");
 }

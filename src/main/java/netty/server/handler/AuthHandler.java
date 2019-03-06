@@ -2,7 +2,7 @@ package netty.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import netty.util.LoginUtil;
+import netty.util.SessionUtil;
 
 /**
  * @author : Lin Can
@@ -11,7 +11,7 @@ import netty.util.LoginUtil;
 public class AuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (!LoginUtil.hasLogin(ctx.channel())) {
+        if (!SessionUtil.hasLogin(ctx.channel())) {
             ctx.channel().close();
             return;
         }
@@ -22,7 +22,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        if (LoginUtil.hasLogin(ctx.channel())) {
+        if (SessionUtil.hasLogin(ctx.channel())) {
             System.out.println("当前连接登录验证完毕，无需再次验证, AuthHandler 被移除");
             super.handlerRemoved(ctx);
         } else {

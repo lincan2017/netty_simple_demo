@@ -17,6 +17,16 @@ import netty.protocol.pocket.Packet;
 public class MessageResponsePacket extends Packet {
 
     /**
+     * 发送方id
+     */
+    private Long fromUserId;
+
+    /**
+     * 发送方用户名
+     */
+    private String fromUserName;
+
+    /**
      * 消息内容
      */
     private String message;

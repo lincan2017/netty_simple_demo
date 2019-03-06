@@ -4,7 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.protocol.pocket.impl.request.LoginRequestPacket;
 import netty.protocol.pocket.impl.response.LoginResponsePacket;
-import netty.util.LoginUtil;
+import netty.session.Session;
+import netty.util.SessionUtil;
 
 import java.util.Date;
 
@@ -41,13 +42,17 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         System.out.println(new Date() + ": 收到客户端登录请求……");
         LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
         if (valid(loginRequestPacket)) {
+            loginResponsePacket.setUserId(System.currentTimeMillis());
+            loginResponsePacket.setUsername(loginRequestPacket.getUsername());
             loginResponsePacket.setSuccess(true);
-            System.out.println(new Date() + ": 登录成功!");
+            System.out.println("[" + loginRequestPacket.getUsername() + "]登录成功");
 
-            LoginUtil.markAsLogin(ctx.channel());
+            Session session = new Session(loginResponsePacket.getUserId(), loginResponsePacket.getUsername());
+            SessionUtil.bindSession(session, ctx.channel());
         } else {
             loginResponsePacket.setSuccess(false);
             loginResponsePacket.setReson("客户端用户名密码校验失败");
+            System.out.println(new Date() + "[" + loginRequestPacket.getUsername() + "]登录失败!");
         }
 
         return loginResponsePacket;
@@ -57,4 +62,9 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         return true;
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        SessionUtil.unBindSession(ctx.channel());
+        super.channelInactive(ctx);
+    }
 }

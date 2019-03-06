@@ -1,9 +1,12 @@
 package netty.server.handler;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.protocol.pocket.impl.request.MessageRequestPacket;
 import netty.protocol.pocket.impl.response.MessageResponsePacket;
+import netty.session.Session;
+import netty.util.SessionUtil;
 
 import java.util.Date;
 
@@ -28,13 +31,28 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageRequestPacket msg) {
         // 响应
-        ctx.channel().writeAndFlush(receiveMessage(msg));
+        receiveMessage(msg, ctx);
     }
 
-    private MessageResponsePacket receiveMessage(MessageRequestPacket messageRequestPacket) {
+    private void receiveMessage(MessageRequestPacket messageRequestPacket, ChannelHandlerContext ctx) {
         System.out.println(new Date() + ": 收到客户端消息: " + messageRequestPacket.getMessage());
+
+        // 获取当前连接的用户信息
+        Session session = SessionUtil.getSession(ctx.channel());
+
+        // 将用户信息（即是发送方的用户信息）和发送消息封装到 MessageResponsePacket 中
         MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
-        messageResponsePacket.setMessage("服务器回复【" + messageRequestPacket.getMessage() + "】");
-        return messageResponsePacket;
+        messageResponsePacket.setFromUserId(session.getUserId());
+        messageResponsePacket.setFromUserName(session.getUsername());
+        messageResponsePacket.setMessage(messageRequestPacket.getMessage());
+
+        // 获取接收方的用户连接
+        Channel channel = SessionUtil.getChannel(messageRequestPacket.getToUserId());
+        if (channel != null && SessionUtil.hasLogin(channel)) {
+            // 将消息发送到对应的用户连接
+            channel.writeAndFlush(messageResponsePacket);
+        } else {
+            System.err.println("[" + messageRequestPacket.getToUserId() + "] 不在线，发送失败!");
+        }
     }
 }

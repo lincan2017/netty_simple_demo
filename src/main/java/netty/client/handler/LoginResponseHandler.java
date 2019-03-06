@@ -2,9 +2,9 @@ package netty.client.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import netty.protocol.pocket.impl.request.LoginRequestPacket;
 import netty.protocol.pocket.impl.response.LoginResponsePacket;
-import netty.util.LoginUtil;
+import netty.session.Session;
+import netty.util.SessionUtil;
 
 import java.util.Date;
 
@@ -16,19 +16,6 @@ import java.util.Date;
  */
 public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginResponsePacket> {
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        System.out.println(new Date() + ": 客户端开始登录");
-        // 构建请求对象
-        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-        loginRequestPacket.setUserId(12346789L);
-        loginRequestPacket.setUsername("flash_fans");
-        loginRequestPacket.setPassword("pwd");
-
-        // 注释掉登录请求的发送 -- 即跳过身份验证
-        //ctx.channel().writeAndFlush(loginRequestPacket);
-    }
-
     /**
      * 在该方法中实现对服务端的登录响应处理
      *
@@ -38,8 +25,8 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket msg) {
         if (msg.getSuccess()) {
-            LoginUtil.markAsLogin(ctx.channel());
-            System.out.println(new Date() + ": 客户端登录成功");
+            SessionUtil.bindSession(new Session(msg.getUserId(),msg.getUsername()),ctx.channel());
+            System.out.println(new Date() + " 客户端登录成功，用户ID: " + msg.getUserId());
         } else {
             System.out.println(new Date() + ": 客户端登录失败，原因：" + msg.getReson());
         }

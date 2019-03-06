@@ -16,6 +16,16 @@ import netty.protocol.pocket.Packet;
 public class LoginResponsePacket extends Packet {
 
     /**
+     * 服务器定义的用户 id
+     */
+    private Long userId;
+
+    /**
+     * 客户端的用户名
+     */
+    private String username;
+
+    /**
      * 成功/失败的标识
      */
     private Boolean success;

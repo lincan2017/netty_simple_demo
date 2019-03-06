@@ -16,6 +16,11 @@ import netty.protocol.pocket.Packet;
 public class MessageRequestPacket extends Packet {
 
     /**
+     * 接收方id
+     */
+    private Long toUserId;
+
+    /**
      * 消息内容
      */
     private String message;
