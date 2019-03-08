@@ -6,13 +6,16 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import netty.client.handler.CreateGroupResponseHandler;
 import netty.client.handler.LoginResponseHandler;
+import netty.client.handler.LogoutResponseHandler;
 import netty.client.handler.MessageResponseHandler;
 import netty.codec.PacketDecoder;
 import netty.codec.PacketEncoder;
 import netty.codec.Spliter;
-import netty.protocol.pocket.impl.request.LoginRequestPacket;
-import netty.protocol.pocket.impl.request.MessageRequestPacket;
+import netty.console.ConsoleCommand;
+import netty.console.ConsoleCommandManager;
+import netty.console.impl.LoginCommand;
 import netty.util.SessionUtil;
 
 import java.util.Date;
@@ -47,7 +50,9 @@ public class Client {
                         ch.pipeline().addLast(new Spliter());
                         ch.pipeline().addLast(new PacketDecoder());
                         ch.pipeline().addLast(new LoginResponseHandler());
+                        ch.pipeline().addLast(new CreateGroupResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
+                        ch.pipeline().addLast(new LogoutResponseHandler());
                         ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
@@ -67,7 +72,7 @@ public class Client {
             if (future.isSuccess()) {
                 System.out.println(new Date() + ": 客户端连接成功");
 
-                startConsoleThread(((ChannelFuture)future).channel());
+                startConsoleThread(((ChannelFuture) future).channel());
                 return;
             }
             if (retry <= 0) {
@@ -97,38 +102,15 @@ public class Client {
             while (!Thread.interrupted()) {
                 // 客户端侧不作登录校验
                 if (SessionUtil.hasLogin(channel)) {
-                    System.out.println("输入需要接收方的id 和 消息：");
-                    String userId = sc.nextLine();
-                    String msg = sc.nextLine();
-
-                    MessageRequestPacket requestPacket = new MessageRequestPacket();
-                    requestPacket.setToUserId(Long.valueOf(userId));
-                    requestPacket.setMessage(msg);
-
-                    channel.writeAndFlush(requestPacket);
+                    ConsoleCommand consoleCommand = new ConsoleCommandManager();
+                    consoleCommand.exec(sc, channel);
                 } else {
-                    System.out.println("输入用户名和密码登录: ");
-                    String username = sc.nextLine();
-                    String password = sc.nextLine();
-
-                    LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-                    loginRequestPacket.setUsername(username);
-                    loginRequestPacket.setPassword(password);
-
-                    channel.writeAndFlush(loginRequestPacket);
-
-                    waitForLoginResponse();
+                    LoginCommand loginCommand = new LoginCommand();
+                    loginCommand.exec(sc, channel);
                 }
 
             }
         }).start();
-    }
-
-    private static void waitForLoginResponse() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
     }
 
 }

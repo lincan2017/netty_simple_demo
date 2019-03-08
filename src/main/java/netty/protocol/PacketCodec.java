@@ -4,9 +4,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
+import netty.protocol.pocket.impl.request.CreateGroupRequestPacket;
 import netty.protocol.pocket.impl.request.LoginRequestPacket;
+import netty.protocol.pocket.impl.request.LogoutRequestPacket;
+import netty.protocol.pocket.impl.response.CreateGroupResponsePacket;
 import netty.protocol.pocket.impl.response.LoginResponsePacket;
 import netty.protocol.pocket.impl.request.MessageRequestPacket;
+import netty.protocol.pocket.impl.response.LogoutResponsePacket;
 import netty.protocol.pocket.impl.response.MessageResponsePacket;
 import serialize.Serialize;
 
@@ -46,6 +50,10 @@ public class PacketCodec {
         PACKET_MAP.put(Command.LOGIN_RESPONSE_COMMAND, LoginResponsePacket.class);
         PACKET_MAP.put(Command.MESSAGE_REQUEST_COMMAND, MessageRequestPacket.class);
         PACKET_MAP.put(Command.MESSAGE_RESPONSE_COMMAND, MessageResponsePacket.class);
+        PACKET_MAP.put(Command.CREATE_GROUP_REQUEST_COMMAND, CreateGroupRequestPacket.class);
+        PACKET_MAP.put(Command.CREATE_GROUP_RESPONSE_COMMAND, CreateGroupResponsePacket.class);
+        PACKET_MAP.put(Command.LOGOUT_REQUEST_COMMAND, LogoutRequestPacket.class);
+        PACKET_MAP.put(Command.LOGOUT_RESPONSE_COMMAND, LogoutResponsePacket.class);
     }
 
     /**

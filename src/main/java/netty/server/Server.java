@@ -9,9 +9,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import netty.codec.PacketDecoder;
 import netty.codec.PacketEncoder;
 import netty.codec.Spliter;
-import netty.server.handler.AuthHandler;
-import netty.server.handler.LoginRequestHandler;
-import netty.server.handler.MessageRequestHandler;
+import netty.server.handler.*;
 
 import java.util.Date;
 
@@ -45,7 +43,9 @@ public class Server {
 
                         ch.pipeline().addLast(new LoginRequestHandler());
                         ch.pipeline().addLast(new AuthHandler());
+                        ch.pipeline().addLast(new CreateGroupRequestHandler());
                         ch.pipeline().addLast(new MessageRequestHandler());
+                        ch.pipeline().addLast(new LogoutRequestHandler());
                         ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
