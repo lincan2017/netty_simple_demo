@@ -1,5 +1,6 @@
 package netty.server.handler;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.protocol.pocket.impl.request.LoginRequestPacket;
@@ -15,7 +16,16 @@ import java.util.Date;
  * @author : Lin Can
  * @date : 2019/3/1 15:07
  */
+
+@ChannelHandler.Sharable
 public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestPacket> {
+
+    public static final LoginRequestHandler INSTANCE = new LoginRequestHandler();
+
+    protected LoginRequestHandler() {
+
+    }
+
     /**
      * 在 channelRead0 中实现登录逻辑
      * 1. 泛型定义为 LoginRequestPacket 表示该处理器只处理该类型的指令消息

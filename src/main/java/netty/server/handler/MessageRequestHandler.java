@@ -1,6 +1,7 @@
 package netty.server.handler;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import netty.protocol.pocket.impl.request.MessageRequestPacket;
@@ -16,8 +17,14 @@ import java.util.Date;
  * @author : Lin Can
  * @date : 2019/3/1 15:09
  */
+@ChannelHandler.Sharable
 public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRequestPacket> {
 
+    public static final MessageRequestHandler INSTANCE = new MessageRequestHandler();
+
+    protected MessageRequestHandler() {
+
+    }
     /**
      * 在 channelRead0 中实现 接收消息后的处理逻辑
      * 1. 泛型定义为 MessageRequestPacket 表示该处理器只处理 该类型的消息

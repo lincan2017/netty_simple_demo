@@ -1,6 +1,7 @@
 package netty.server.handler;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
@@ -15,7 +16,14 @@ import netty.util.SessionUtil;
  * @author : Lin Can
  * @date : 2019/3/11 11:35
  */
+@ChannelHandler.Sharable
 public class GroupMessageRequestHandler extends SimpleChannelInboundHandler<GroupMessageRequestPacket> {
+
+    public static final GroupMessageRequestHandler INSTANCE = new GroupMessageRequestHandler();
+
+    protected GroupMessageRequestHandler() {
+
+    }
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GroupMessageRequestPacket msg) {
         Long groupId = msg.getGroupId();
