@@ -46,4 +46,34 @@ public interface Command {
      *  登出响应指令
      */
     byte LOGOUT_RESPONSE_COMMAND = 8;
+
+    /**
+     * 加入群聊指令
+     */
+    byte JOIN_GROUP_REQUEST_COMMAND = 9;
+
+    /**
+     * 加入群聊响应指令
+     */
+    byte JOIN_GROUP_RESPONSE_COMMAND = 10;
+
+    /**
+     * 展示群成员请求指令
+     */
+    byte LIST_GROUP_REQUEST_COMMAND = 11;
+
+    /**
+     * 展示群成员响应指令
+     */
+    byte LIST_GROUP_RESPONSE_COMMAND = 12;
+
+    /**
+     * 退群请求指令
+     */
+    byte QUIT_GROUP_REQUEST_COMMAND = 13;
+
+    /**
+     * 退群响应指令
+     */
+    byte QUIT_GROUP_RESPONSE_COMMAND = 14;
 }

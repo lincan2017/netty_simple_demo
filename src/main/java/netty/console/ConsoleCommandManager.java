@@ -1,10 +1,7 @@
 package netty.console;
 
 import io.netty.channel.Channel;
-import netty.console.impl.CreateGroupCommand;
-import netty.console.impl.LoginCommand;
-import netty.console.impl.LogoutCommand;
-import netty.console.impl.SendToUserCommand;
+import netty.console.impl.*;
 import netty.util.SessionUtil;
 
 import java.util.HashMap;
@@ -26,6 +23,9 @@ public class ConsoleCommandManager implements ConsoleCommand {
         consoleCommandMap.put("logout", new LogoutCommand());
         consoleCommandMap.put("createGroup", new CreateGroupCommand());
         consoleCommandMap.put("sendToUser", new SendToUserCommand());
+        consoleCommandMap.put("listGroupMembers", new ListGroupMembersCommand());
+        consoleCommandMap.put("quitGroup", new QuitGroupCommand());
+        consoleCommandMap.put("joinGroup", new JoinGroupCommand());
     }
 
     @Override

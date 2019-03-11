@@ -4,14 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import netty.protocol.command.Command;
 import netty.protocol.pocket.Packet;
-import netty.protocol.pocket.impl.request.CreateGroupRequestPacket;
-import netty.protocol.pocket.impl.request.LoginRequestPacket;
-import netty.protocol.pocket.impl.request.LogoutRequestPacket;
-import netty.protocol.pocket.impl.response.CreateGroupResponsePacket;
-import netty.protocol.pocket.impl.response.LoginResponsePacket;
-import netty.protocol.pocket.impl.request.MessageRequestPacket;
-import netty.protocol.pocket.impl.response.LogoutResponsePacket;
-import netty.protocol.pocket.impl.response.MessageResponsePacket;
+import netty.protocol.pocket.impl.request.*;
+import netty.protocol.pocket.impl.response.*;
 import serialize.Serialize;
 
 import java.util.HashMap;
@@ -19,6 +13,7 @@ import java.util.Map;
 
 /**
  * 编解码类
+ *
  * @author : Lin Can
  * @date : 2019/2/27 9:23
  */
@@ -31,19 +26,19 @@ public class PacketCodec {
     /**
      * 存放序列化方式的map
      */
-    private static final Map<Byte,Serialize> SERIALIZE_MAP;
+    private static final Map<Byte, Serialize> SERIALIZE_MAP;
 
     /**
      * 存放指令的map
      */
-    private static final Map<Byte,Class<? extends Packet>> PACKET_MAP;
+    private static final Map<Byte, Class<? extends Packet>> PACKET_MAP;
 
     public static final PacketCodec INSTANCE = new PacketCodec();
 
     static {
         SERIALIZE_MAP = new HashMap<>();
         Serialize serialize = Serialize.DEFAULT;
-        SERIALIZE_MAP.put(serialize.getSerializeAlgorithm(),serialize);
+        SERIALIZE_MAP.put(serialize.getSerializeAlgorithm(), serialize);
 
         PACKET_MAP = new HashMap<>();
         PACKET_MAP.put(Command.LOGIN_REQUEST_COMMAND, LoginRequestPacket.class);
@@ -54,31 +49,40 @@ public class PacketCodec {
         PACKET_MAP.put(Command.CREATE_GROUP_RESPONSE_COMMAND, CreateGroupResponsePacket.class);
         PACKET_MAP.put(Command.LOGOUT_REQUEST_COMMAND, LogoutRequestPacket.class);
         PACKET_MAP.put(Command.LOGOUT_RESPONSE_COMMAND, LogoutResponsePacket.class);
+        PACKET_MAP.put(Command.JOIN_GROUP_REQUEST_COMMAND, JoinGroupRequestPacket.class);
+        PACKET_MAP.put(Command.JOIN_GROUP_RESPONSE_COMMAND, JoinGroupResponsePacket.class);
+        PACKET_MAP.put(Command.LIST_GROUP_REQUEST_COMMAND, ListGroupMembersRequestPacket.class);
+        PACKET_MAP.put(Command.LIST_GROUP_RESPONSE_COMMAND, ListGroupMembersResponsePacket.class);
+        PACKET_MAP.put(Command.QUIT_GROUP_REQUEST_COMMAND, QuitGroupRequestPacket.class);
+        PACKET_MAP.put(Command.QUIT_GROUP_RESPONSE_COMMAND, QuitGroupResponsePacket.class);
+
     }
 
     /**
      * 编码：将数据包转换为 Netty 传输的数据载体对象
+     *
+     * @param packet           数据包
+     * @param byteBufAllocator ByteBuf 分配器
      * @author : Lin Can
      * @date: 2019/2/27 10:43
-     * @param packet  数据包
-     * @param byteBufAllocator ByteBuf 分配器
      * @return: io.netty.buffer.ByteBuf
      */
     public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
         // 1 获取 Netty 的传输数据载体
         ByteBuf byteBuf = byteBufAllocator.ioBuffer();
 
-        encode(byteBuf,packet);
+        encode(byteBuf, packet);
 
         return byteBuf;
     }
 
     /**
      * 编码：将数据包转换为 Netty 传输的数据载体对象
-     * @author : Lin Can
-     * @date: 2019/2/27 10:43
+     *
      * @param packet  数据包
      * @param byteBuf 存放编码后的数据
+     * @author : Lin Can
+     * @date: 2019/2/27 10:43
      */
     public void encode(ByteBuf byteBuf, Packet packet) {
 
@@ -104,9 +108,10 @@ public class PacketCodec {
 
     /**
      * 解码:将通过 Netty 收到的数据 转换为数据包对象
+     *
+     * @param byteBuf 传输数据载体
      * @author : Lin Can
      * @date: 2019/2/27 10:44
-     * @param byteBuf 传输数据载体
      * @return: netty.protocol.pocket.Packet
      */
     public Packet decode(ByteBuf byteBuf) {
@@ -131,7 +136,7 @@ public class PacketCodec {
         byte[] dist = new byte[dataLen];
         byteBuf.readBytes(dist);
 
-        return serialize.deserialize(dist,clazz);
+        return serialize.deserialize(dist, clazz);
     }
 
     private Serialize getSerializeFromMap(Byte serializeAlgorithm) {

@@ -7,6 +7,7 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import netty.protocol.pocket.impl.request.CreateGroupRequestPacket;
 import netty.protocol.pocket.impl.response.CreateGroupResponsePacket;
+import netty.util.GroupUtil;
 import netty.util.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +40,8 @@ public class CreateGroupRequestHandler extends SimpleChannelInboundHandler<Creat
         responsePacket.setUserNames(userNames);
 
         channelGroup.writeAndFlush(responsePacket);
+
+        GroupUtil.newGroup(responsePacket.getGroupId(),channelGroup);
 
         System.out.print("群创建成功，id 为[" + responsePacket.getGroupId() + "], ");
         System.out.println("群里面有：" + StringUtils.join(responsePacket.getUserNames(),","));
