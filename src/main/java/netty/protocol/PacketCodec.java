@@ -57,6 +57,8 @@ public class PacketCodec {
         PACKET_MAP.put(Command.QUIT_GROUP_RESPONSE_COMMAND, QuitGroupResponsePacket.class);
         PACKET_MAP.put(Command.GROUP_MESSAGE_REQUEST_COMMAND, GroupMessageRequestPacket.class);
         PACKET_MAP.put(Command.GROUP_MESSAGE_RESPONSE_COMMAND, GroupMessageResponsePacket.class);
+        PACKET_MAP.put(Command.HEART_BEAT_REQUEST_COMMAND, HeartBeatRequestPacket.class);
+        PACKET_MAP.put(Command.HEART_BEAT_RESPONSE_COMMAND, HeartBeatResponsePacket.class);
 
     }
 

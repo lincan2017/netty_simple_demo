@@ -12,6 +12,7 @@ import netty.codec.Spliter;
 import netty.console.ConsoleCommand;
 import netty.console.ConsoleCommandManager;
 import netty.console.impl.LoginCommand;
+import netty.idle.IMIdleStateHandler;
 import netty.util.SessionUtil;
 
 import java.util.Date;
@@ -43,9 +44,12 @@ public class Client {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
+                        ch.pipeline().addLast(new IMIdleStateHandler());
+
                         ch.pipeline().addLast(new Spliter());
 
                         ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
+                        ch.pipeline().addLast(new HeartBeatTimerHandler());
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new CreateGroupResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
@@ -54,6 +58,8 @@ public class Client {
                         ch.pipeline().addLast(new ListGroupMembersResponseHandler());
                         ch.pipeline().addLast(new QuitGroupResponseHandler());
                         ch.pipeline().addLast(new GroupMessageResponseHandler());
+
+
 
                     }
                 });

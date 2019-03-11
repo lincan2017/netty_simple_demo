@@ -86,4 +86,14 @@ public interface Command {
      * 群消息响应指令
      */
     byte GROUP_MESSAGE_RESPONSE_COMMAND = 16;
+
+    /**
+     * 心跳包（客户端->服务端）
+     */
+    byte HEART_BEAT_REQUEST_COMMAND = 17;
+
+    /**
+     * 心跳包响应（服务端->客户端）
+     */
+    byte HEART_BEAT_RESPONSE_COMMAND = 18;
 }

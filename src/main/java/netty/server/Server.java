@@ -7,7 +7,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import netty.codec.PacketCodecHandler;
 import netty.codec.Spliter;
-import netty.server.handler.*;
+import netty.idle.IMIdleStateHandler;
+import netty.server.handler.AuthHandler;
+import netty.server.handler.HeartBeatRequestHandler;
+import netty.server.handler.IMHandler;
+import netty.server.handler.LoginRequestHandler;
 
 import java.util.Date;
 
@@ -35,11 +39,13 @@ public class Server {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
+                        ch.pipeline().addLast(new IMIdleStateHandler());
                         ch.pipeline().addLast(new Spliter());
 
                         ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
 
                         ch.pipeline().addLast(LoginRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);
                         ch.pipeline().addLast(AuthHandler.INSTANCE);
                         ch.pipeline().addLast(IMHandler.INSTANCE);
 
