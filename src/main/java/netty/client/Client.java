@@ -7,8 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import netty.client.handler.*;
-import netty.codec.PacketDecoder;
-import netty.codec.PacketEncoder;
+import netty.codec.PacketCodecHandler;
 import netty.codec.Spliter;
 import netty.console.ConsoleCommand;
 import netty.console.ConsoleCommandManager;
@@ -46,7 +45,7 @@ public class Client {
                     protected void initChannel(NioSocketChannel ch) {
                         ch.pipeline().addLast(new Spliter());
 
-                        ch.pipeline().addLast(new PacketDecoder());
+                        ch.pipeline().addLast(PacketCodecHandler.INSTANCE);
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new CreateGroupResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
@@ -56,7 +55,6 @@ public class Client {
                         ch.pipeline().addLast(new QuitGroupResponseHandler());
                         ch.pipeline().addLast(new GroupMessageResponseHandler());
 
-                        ch.pipeline().addLast(new PacketEncoder());
                     }
                 });
         connect(bootstrap, HOST, PORT, MAX_RETRY);
