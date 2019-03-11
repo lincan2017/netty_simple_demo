@@ -41,13 +41,7 @@ public class Server {
 
                         ch.pipeline().addLast(LoginRequestHandler.INSTANCE);
                         ch.pipeline().addLast(AuthHandler.INSTANCE);
-                        ch.pipeline().addLast(CreateGroupRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(MessageRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(LogoutRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(JoinGroupRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(ListGroupMembersRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(QuitGroupRequestHandler.INSTANCE);
-                        ch.pipeline().addLast(GroupMessageRequestHandler.INSTANCE);
+                        ch.pipeline().addLast(IMHandler.INSTANCE);
 
                     }
                 });

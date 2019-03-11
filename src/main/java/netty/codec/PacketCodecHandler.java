@@ -1,6 +1,7 @@
 package netty.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import netty.protocol.PacketCodec;
@@ -14,10 +15,11 @@ import java.util.List;
  * @author : Lin Can
  * @date : 2019/3/11 13:44
  */
+@ChannelHandler.Sharable
 public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, Packet> {
     public static final PacketCodecHandler INSTANCE = new PacketCodecHandler();
 
-    protected PacketCodecHandler() {
+    private PacketCodecHandler() {
 
     }
 
