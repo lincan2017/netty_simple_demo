@@ -76,4 +76,14 @@ public interface Command {
      * 退群响应指令
      */
     byte QUIT_GROUP_RESPONSE_COMMAND = 14;
+
+    /**
+     * 发送消息到群组指令
+     */
+    byte GROUP_MESSAGE_REQUEST_COMMAND = 15;
+
+    /**
+     * 群消息响应指令
+     */
+    byte GROUP_MESSAGE_RESPONSE_COMMAND = 16;
 }

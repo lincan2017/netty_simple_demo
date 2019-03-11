@@ -55,6 +55,8 @@ public class PacketCodec {
         PACKET_MAP.put(Command.LIST_GROUP_RESPONSE_COMMAND, ListGroupMembersResponsePacket.class);
         PACKET_MAP.put(Command.QUIT_GROUP_REQUEST_COMMAND, QuitGroupRequestPacket.class);
         PACKET_MAP.put(Command.QUIT_GROUP_RESPONSE_COMMAND, QuitGroupResponsePacket.class);
+        PACKET_MAP.put(Command.GROUP_MESSAGE_REQUEST_COMMAND, GroupMessageRequestPacket.class);
+        PACKET_MAP.put(Command.GROUP_MESSAGE_RESPONSE_COMMAND, GroupMessageResponsePacket.class);
 
     }
 

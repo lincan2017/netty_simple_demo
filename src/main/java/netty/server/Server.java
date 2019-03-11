@@ -49,6 +49,7 @@ public class Server {
                         ch.pipeline().addLast(new JoinGroupRequestHandler());
                         ch.pipeline().addLast(new ListGroupMembersRequestHandler());
                         ch.pipeline().addLast(new QuitGroupRequestHandler());
+                        ch.pipeline().addLast(new GroupMessageRequestHandler());
 
                         ch.pipeline().addLast(new PacketEncoder());
                     }
